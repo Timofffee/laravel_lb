@@ -21,10 +21,17 @@ class Book extends Model
     }
 
     static public function share($id, $status) {
-        Book::where([
+        if (!Auth::check()) {
+            return;
+        }
+        $book = Book::where([
             ['id', $id], 
             ['owner', Auth::id()]
-        ])->update(['shared' => $status]);
+        ]);
+        if ($book) {
+            $book->update(['shared' => $status]);
+        }
+        
     }
 
 
