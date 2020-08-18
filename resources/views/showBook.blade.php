@@ -7,15 +7,16 @@
             <div class="card">
                 <div class="card-header">
                     @if ($book == null)
-                        <p class="float-left mt-2 mb-0">Упс..</p>
+                        <h3>Упс..</h3>
                 </div>
 
                 <div class="card-body">
                     <p class="">Кажется, книга удалена или ещё не создана..</p>
                 </div>
                     @else
-                        <p class="float-left mt-2 mb-0">{{ $book->title }}</p>
-                        @if (Auth::check() && $book->owner == Auth::user()->id)
+                        <h3>{{ $book->title }}</h3>
+                        <p class="float-left mt-2 mb-0">Автор: <a href="{{ route('user', $book->owner->id) }}" target="_blank" rel="noopener noreferrer">{{ $book->owner->name }}</a></p>
+                        @if (Auth::check() && $book->owner->id == Auth::user()->id)
                             @if ($book->shared)
                                 <a href="/book/{{ $book->id }}?shared=0" class="btn btn-secondary float-right">Закрыть доступ по ссылке</a>
                             @else

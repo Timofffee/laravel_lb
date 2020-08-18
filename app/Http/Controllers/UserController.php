@@ -18,43 +18,27 @@ class UserController extends Controller
     public function index(Request $req, $id)
     {
         $data = null;
-        $shared = false;
-
-        $user = User::where('id', $id)->first();
-        if (!$user) {
-            redirect('/');
-        }
+        $shared = false;       
         
         if (Auth::check()) {
             if (in_array($req->query('shared'), ['0', '1'])) {
                 if ($req->query('shared') == '0') {
-                    libShare::where('user_id', $id)
-                        ->where('owner', Auth::user()->id)
-                        ->delete();
-                } elseif (!libShare::where('user_id', $id)
-                    ->where('owner', Auth::user()->id)->first()) {
-    
-                    $share = new libShare();
-                    $share->owner = Auth::user()->id;
-                    $share->user_id = $id;
-                    $share->save();
+                    libShare::deleteShare($id);
+                } elseif (!libShare::getShare(Auth::user()->id, $id)) {
+                    libShare::createShare($id);
                 }
                 redirect()->route('user', ['id' => $id]);
             }
 
-            if (libShare::where('user_id', Auth::user()->id)
-                ->where('owner', $id)
-                ->first()) {
-                    $data = Book::where('owner', $id)->get();
+            if (libShare::getShare($id, Auth::user()->id) or $id == Auth::user()->id) {
+                $data = Book::getAllBooks($id);
             }
 
-            $shared = boolval(libShare::where('user_id', $id)
-                ->where('owner', Auth::user()->id)
-                ->first());
+            $shared = boolval(libShare::getShare(Auth::user()->id, $id));
         }
         
         return view('home', [
-            'user' => $user, 
+            'user' => User::find($id), 
             'data' => $data, 
             'shared' => $shared
         ]);

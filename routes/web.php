@@ -30,6 +30,6 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/delete/{id}', 'BookController@delete')->name('delete');
     
-    Route::get('/user/{id}', 'UserController@index')->name('user');
+    Route::get('/user/{id}', 'UserController@index')->middleware('check.user')->name('user');
 });
-Route::get('/book/{id}', 'BookController@index')->name('book');
+Route::get('/book/{id}', 'BookController@index')->middleware('check.book')->name('book');

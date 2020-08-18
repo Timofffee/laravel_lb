@@ -17,7 +17,7 @@ class HomeController extends Controller
      */
     public function index(Request $req)
     {
-        $data = Book::where('owner', Auth::user()->id)->get();
+        $data = Book::getAllBooks(Auth::user()->id);
         return view('home', ['user' => Auth::user(), 'data' => $data]);
     }
 }
